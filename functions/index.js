@@ -13,13 +13,15 @@ exports.soma = functions.database.ref('/movimentacoes/{dia}')
         let entradas = 0
         let saidas = 0
 
-        Object.keys(movimentacoes).forEach(m => {
-            if (movimentacoes[m].valor > 0) {
-                entradas += movimentacoes[m].valor
-            } else {
-                saidas += movimentacoes[m].valor
-            }
-        })
+        if(movimentacoes){
+            Object.keys(movimentacoes).forEach(m => {
+                if (movimentacoes[m].valor > 0) {
+                    entradas += movimentacoes[m].valor
+                } else {
+                    saidas += movimentacoes[m].valor
+                }
+            })
+        }
 
         return mesesRef.transaction(current => {
             if (current === null) {

@@ -8,7 +8,7 @@ const { useGet } = Rest(baseURL)
 const Meses = () => {
     const data = useGet('meses')
     if (data.loading) {
-        return (<span>Carregando...</span>)
+        return (<p>Carregando...</p>)
     }
     if (Object.keys(data.data).length > 0) {
         return (
