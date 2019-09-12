@@ -1,29 +1,45 @@
 import React from 'react'
 import Rest from '../../utils/rest'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 
 const baseURL = 'https://mymoney-dev.firebaseio.com/'
-const { useGet } = Rest(baseURL)
+const { useGet, useDelete } = Rest(baseURL)
 
 const Meses = () => {
     const data = useGet('meses')
-    if (data.loading) {
-        return (<p>Carregando...</p>)
+    const [removeData, remover] = useDelete()
+
+    const removerMes = async (id) => {
+        await remover(`meses/${id}`)
+        data.refetch()
     }
-    if (Object.keys(data.data).length > 0) {
+
+    if (data.loading) {
+        return <p>Carregando...</p>
+    }
+
+    if (data.error && data.error === 'Permission denied') {
+        return <Redirect to='/login' />
+    }
+
+    if (!(data.data) || Object.keys(data.data).length > 0) {
         return (
-            <table className='table'>
+            <table className='table table-dark'>
                 <thead>
                     <tr>
                         <th>Mês</th>
-                        <td>Previsão de entrada</td>
-                        <td>Entrada</td>
-                        <td>Previsão de saída</td>
-                        <td>Saída</td>
+                        <th>Previsão de entrada</th>
+                        <th>Entrada</th>
+                        <th>Previsão de saída</th>
+                        <th>Saída</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
+                        !(data.data) && <tr><td>Sem movimentações</td></tr>
+                    }
+                    {
+                        (data.data) &&
                         Object.keys(data.data)
                             .map(mes => {
                                 return (
@@ -32,7 +48,10 @@ const Meses = () => {
                                         <td>{data.data[mes].previsao_entrada}</td>
                                         <td>{data.data[mes].entradas}</td>
                                         <td>{data.data[mes].previsao_saida}</td>
-                                        <td>{data.data[mes].saidas}</td>
+                                        <td>
+                                            {data.data[mes].saidas} {''}
+                                            <button className='btn btn-danger' onClick={() => removerMes(mes)}>-</button>
+                                        </td>
                                     </tr>
                                 )
                             })
@@ -42,7 +61,6 @@ const Meses = () => {
         )
     }
     return (null)
-
 }
 
 export default Meses

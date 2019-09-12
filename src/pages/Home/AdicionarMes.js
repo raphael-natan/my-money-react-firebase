@@ -36,7 +36,7 @@ const AdicionarMes = () => {
 
     return (
         <React.Fragment>
-            <h2>Adicionar mês</h2>
+            <h1>Adicionar mês</h1>
             <select ref={refAno}>
                 {anos.map(ano => <option key={ano} value={ano}>{ano}</option>)}
             </select>
